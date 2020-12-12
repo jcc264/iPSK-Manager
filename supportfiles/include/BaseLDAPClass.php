@@ -37,8 +37,9 @@
 		private $ldapBaseDN;
 		private $ldapsecure = true;
 		private $iPSKManagerClass;
+		private $ldapStartTLS = fasle;
 		
-		function __construct($ldapServer = null, $domainName = null, $username = null, $password = null, $baseDN = null, $ldaps = true, $ipskManagerClass = false) {		
+		function __construct($ldapServer = null, $domainName = null, $username = null, $password = null, $baseDN = null, $ldaps = true, $ipskManagerClass = false, $StartTLS = false) {		
 			$this->ldapHost = $ldapServer;
 			$this->ldapDomain = $domainName;
 			$this->ldapUsername = $username;
@@ -46,6 +47,7 @@
 			$this->ldapBaseDN = $baseDN;
 			$this->ldapsecure = $ldaps;
 			$this->iPSKManagerClass = $ipskManagerClass;
+			$this->ldapStartTLS = $startTLS;
 		}
 		
 		function set_ldapHost($hostname) {
@@ -92,6 +94,10 @@
 			return $this->ldapsecure;
 		}
 		
+		function get_LDAPStartTLS() {
+			return $this->ldapStartTLS;
+		}
+		
 		function testLdapServer(){
 		
 			if($this->ldapsecure){
@@ -102,7 +108,11 @@
 
 			ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0);
-			
+
+			if($this->ldapStartTLS){
+                                ldap_start_tls($ldapConnection);
+                        }
+
 			$ldapBind = @ldap_bind($ldapConnection, $this->ldapUsername, $this->ldapPassword);
 			
 			if($ldapBind){
@@ -122,7 +132,11 @@
 
 			ldap_set_option($ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapConnection, LDAP_OPT_REFERRALS, 0);
-			
+
+			if($this->ldapStartTLS){
+                                ldap_start_tls($ldapConnection);
+                        }
+
 			$ldapBind = @ldap_bind($ldapConnection, $this->ldapUsername, $this->ldapPassword);
 			
 			if($ldapBind){
